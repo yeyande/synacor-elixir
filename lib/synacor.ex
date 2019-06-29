@@ -16,6 +16,13 @@ defmodule Synacor do
       :noop
 
   """
+  def init_vm do
+    %{
+      registers: List.duplicate(0, 8),
+      stack: []
+    }
+  end
+
   def _halt(system \\ System) do
     system.stop 0
   end

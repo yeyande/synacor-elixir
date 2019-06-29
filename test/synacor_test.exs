@@ -10,6 +10,13 @@ defmodule SynacorTest do
     def write('c'), do: :ok
   end
 
+  test "should give proper initialization state" do
+    assert Synacor.init_vm() == %{
+      registers: List.duplicate(0, 8),
+      stack: []
+    }
+  end
+
   test "should stop application" do
     assert Synacor._halt(FakeSystem) == :stop
   end
@@ -37,4 +44,5 @@ defmodule SynacorTest do
   test "should not do anything" do
     assert Synacor._noop() == :noop
   end
+
 end
