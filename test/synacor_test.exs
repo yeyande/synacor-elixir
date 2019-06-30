@@ -60,14 +60,14 @@ defmodule SynacorTest do
   end
 
   describe "equality operations" do
-    test "should set register 1 to 1" do
+    test "should set register 1 to 1 when equal" do
       assert Synacor._eq(@base_state, 1, 0, 2) == Map.replace!(
         @base_state,
         :registers, 
         [0, 1, 0, 0, 0, 0, 0, 0])
     end
 
-    test "should set register 1 to 0" do
+    test "should set register 1 to 0 when not equal" do
       state = Map.replace!(
         @base_state,
         :registers,
@@ -76,6 +76,32 @@ defmodule SynacorTest do
         state,
         :registers, 
         [1, 0, 3, 0, 0, 0, 0, 0])
+    end
+
+    test "should set register to 1 to 1 when greater than" do
+      state = Map.replace!(
+        @base_state,
+        :registers,
+        [2, 0, 1, 0, 0, 0, 0, 0])
+      assert Synacor._gt(state, 1, 0, 2) == Map.replace!(
+        state,
+        :registers, 
+        [2, 1, 1, 0, 0, 0, 0, 0])
+    end
+
+    test "should set register to 1 to 0 when less than" do
+      state = Map.replace!(
+        @base_state,
+        :registers,
+        [2, 0, 1, 0, 0, 0, 0, 0])
+      assert Synacor._gt(state, 1, 2, 0) == Map.replace!(
+        state,
+        :registers, 
+        [2, 0, 1, 0, 0, 0, 0, 0])
+    end
+
+    test "should set register 1 to 0 when equal" do
+      assert Synacor._gt(@base_state, 1, 0, 2) == @base_state
     end
   end
 
