@@ -157,6 +157,15 @@ defmodule Synacor do
     application
   end
 
+  def _in(io \\ IO, application, out) do
+    input = io.gets("") |> String.trim |> String.to_charlist
+    registers = application |> Map.fetch!(:registers)
+    {new_registers, _} = input |> List.foldl(
+      {registers, out},
+      fn char, {acc, inc} -> {List.replace_at(acc, inc, char), inc+1} end)
+    application |> Map.replace!(:registers, new_registers)
+  end
+
   def _noop(application) do
     application
   end

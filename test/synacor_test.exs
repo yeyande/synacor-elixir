@@ -8,6 +8,7 @@ defmodule SynacorTest do
 
   defmodule FakeIO do
     def write('c'), do: :ok
+    def gets(""), do: "abc\n"
   end
 
   @base_state %{
@@ -262,6 +263,10 @@ defmodule SynacorTest do
 
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
+  end
+
+  test "should copy input into memory" do
+    assert Synacor._in(FakeIO, @base_state, 0) == @base_state |> Map.replace!(:registers, [97, 98, 99, 0, 0, 0, 0, 0])
   end
 
   test "should not do anything" do
