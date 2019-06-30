@@ -59,6 +59,26 @@ defmodule SynacorTest do
     end
   end
 
+  describe "equality operations" do
+    test "should set register 1 to 1" do
+      assert Synacor._eq(@base_state, 1, 0, 2) == Map.replace!(
+        @base_state,
+        :registers, 
+        [0, 1, 0, 0, 0, 0, 0, 0])
+    end
+
+    test "should set register 1 to 0" do
+      state = Map.replace!(
+        @base_state,
+        :registers,
+        [1, 1, 3, 0, 0, 0, 0, 0])
+      assert Synacor._eq(state, 1, 0, 2) == Map.replace!(
+        state,
+        :registers, 
+        [1, 0, 3, 0, 0, 0, 0, 0])
+    end
+  end
+
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end
