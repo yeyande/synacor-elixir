@@ -244,6 +244,13 @@ defmodule SynacorTest do
     end
   end
 
+  test "call should push next instruction onto the stack and jump" do
+    assert Synacor._call(@base_state, 500) == Map.merge(
+      @base_state,
+      %{ pc: 500, stack: [1] }
+    )
+  end
+
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end

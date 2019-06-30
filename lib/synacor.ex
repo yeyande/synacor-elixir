@@ -131,6 +131,16 @@ defmodule Synacor do
     application |> _set(out, a)
   end
 
+  defp get_next_instruction(application) do
+    Map.update!(application, :pc, fn pc -> pc + 1 end)
+  end
+
+  def _call(application, loc) do
+    next_pc = application |> get_next_instruction
+    new_state = application |> _push(Map.fetch!(next_pc, :pc))
+    new_state |> _jmp(loc)
+  end
+
   def _out(io \\ IO, application, char) do
     io.write char
     application
