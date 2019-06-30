@@ -28,9 +28,10 @@ defmodule Synacor do
   end
 
   def _set(application, reg, val) do
-    new_registers = List.replace_at(
-                      Map.fetch!(application, :registers), reg, val)
-    Map.replace!(application, :registers, new_registers)
+    Map.update!(
+      application,
+      :registers,
+      fn regs -> List.replace_at(regs, reg, val) end)
   end
 
   def _push(stack, val) do
@@ -38,8 +39,11 @@ defmodule Synacor do
   end
 
   def _pop(application, reg) do
-    [top | rest] = Map.fetch!(application, :stack)
-    new_state = Map.replace!(application, :stack, rest)
+    {top, new_state} = Map.get_and_update!(
+      application,
+      :stack,
+      fn [top | rest] -> {top, rest} end
+    )
     _set(new_state, reg, top)
   end
 
