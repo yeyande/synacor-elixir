@@ -127,6 +127,10 @@ defmodule Synacor do
     application |> _set(out, get_register(application, loc))
   end
 
+  def _wmem(application, out, a) do
+    application |> _set(out, a)
+  end
+
   def _out(io \\ IO, application, char) do
     io.write char
     application

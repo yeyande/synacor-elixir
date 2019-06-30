@@ -229,6 +229,19 @@ defmodule SynacorTest do
         [4, 0, 4, 0, 0, 0, 0, 0]
       )
     end
+
+    test "write should store 500 into register 0" do
+      state = Map.replace!(
+        @base_state,
+        :registers,
+        [0, 0, 4, 0, 0, 0, 0, 0]
+      )
+      assert Synacor._wmem(state, 0, 500) == Map.replace!(
+        state,
+        :registers,
+        [500, 0, 4, 0, 0, 0, 0, 0]
+      )
+    end
   end
 
   test "should print a character" do
