@@ -118,6 +118,11 @@ defmodule Synacor do
     application |> _set(out, a ||| b)
   end
 
+  def _not(application, out, a) do
+    << _::1, x::15 >>= <<Bitwise.bnot(a)::16 >>
+    application |> _set(out, x)
+  end
+
   def _out(io \\ IO, application, char) do
     io.write char
     application

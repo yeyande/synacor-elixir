@@ -206,6 +206,14 @@ defmodule SynacorTest do
         [6, 0, 0, 0, 0, 0, 0, 0]
       )
     end
+
+    test "not 4 should be 32763" do
+      assert Synacor._not(@base_state, 0, 4) == Map.replace!(
+        @base_state,
+        :registers,
+        [32763, 0, 0, 0, 0, 0, 0, 0]
+      )
+    end
   end
 
   test "should print a character" do
