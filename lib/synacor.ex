@@ -55,7 +55,7 @@ defmodule Synacor do
     end
   end
 
-  def get_register(application, reg) do
+  defp get_register(application, reg) do
     Map.fetch!(application, :registers) |> Enum.at reg
   end
 
