@@ -60,16 +60,21 @@ defmodule Synacor do
     Map.fetch!(application, :registers) |> Enum.at(reg)
   end
 
-  def _eq(application, out, a, b) do
+  defp compare_registers(application, operator, a, b) do
     val1 = get_register(application, a)
     val2 = get_register(application, b)
-    _set(application, out, (if val1 == val2, do: 1, else: 0))
+    case operator.(val1, val2) do
+      true -> 1
+      false -> 0
+    end
+  end
+
+  def _eq(application, out, a, b) do
+    _set(application, out, compare_registers(application, &Kernel.==/2, a, b))
   end
 
   def _gt(application, out, a, b) do
-    val1 = get_register(application, a)
-    val2 = get_register(application, b)
-    _set(application, out, (if val1 > val2, do: 1, else: 0))
+    _set(application, out, compare_registers(application, &Kernel.>/2, a, b))
   end
 
   def _jmp(application, loc) do
