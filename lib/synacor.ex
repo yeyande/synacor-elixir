@@ -9,11 +9,11 @@ defmodule Synacor do
   ## Examples
 
       iex> import ExUnit.CaptureIO
-      iex> capture_io(fn -> Synacor._out('c') end)
+      iex> capture_io(fn -> Synacor._out(%{}, 'c') end)
       "c"
 
-      iex> Synacor._noop
-      :noop
+      iex> Synacor._noop(%{})
+      %{}
 
   """
   def init_vm do
@@ -51,11 +51,12 @@ defmodule Synacor do
     _set(new_state, reg, top)
   end
 
-  def _out(io \\ IO, char) do
+  def _out(io \\ IO, application, char) do
     io.write char
+    application
   end
 
-  def _noop do
-    :noop
+  def _noop(application) do
+    application
   end
 end

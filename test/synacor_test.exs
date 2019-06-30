@@ -52,11 +52,11 @@ defmodule SynacorTest do
   end
 
   test "should print a character" do
-    assert Synacor._out(FakeIO, 'c') == :ok
+    assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end
 
   test "should not do anything" do
-    assert Synacor._noop() == :noop
+    assert Synacor._noop(@base_state) == @base_state
   end
 
 end
