@@ -190,6 +190,16 @@ defmodule SynacorTest do
     end
   end
 
+  describe "bitwise operations" do
+    test "and 3 and 2 should be 2" do
+      assert Synacor._and(@base_state, 0, 3, 2) == Map.replace!(
+        @base_state,
+        :registers,
+        [2, 0, 0, 0, 0, 0, 0, 0]
+      )
+    end
+  end
+
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end

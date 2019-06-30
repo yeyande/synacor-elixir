@@ -1,4 +1,5 @@
 defmodule Synacor do
+  use Bitwise
   @moduledoc """
   Documentation for Synacor.
   """
@@ -107,6 +108,10 @@ defmodule Synacor do
 
   def _mod(application, out, a, b) do
     application |> _set(out, rem(a, b))
+  end
+
+  def _and(application, out, a, b) do
+    application |> _set(out, a &&& b)
   end
 
   def _out(io \\ IO, application, char) do
