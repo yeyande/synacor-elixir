@@ -198,6 +198,14 @@ defmodule SynacorTest do
         [2, 0, 0, 0, 0, 0, 0, 0]
       )
     end
+
+    test "or 4 and 2 should be 6" do
+      assert Synacor._or(@base_state, 0, 4, 2) == Map.replace!(
+        @base_state,
+        :registers,
+        [6, 0, 0, 0, 0, 0, 0, 0]
+      )
+    end
   end
 
   test "should print a character" do

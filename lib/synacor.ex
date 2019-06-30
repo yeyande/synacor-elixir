@@ -114,6 +114,10 @@ defmodule Synacor do
     application |> _set(out, a &&& b)
   end
 
+  def _or(application, out, a, b) do
+    application |> _set(out, a ||| b)
+  end
+
   def _out(io \\ IO, application, char) do
     io.write char
     application
