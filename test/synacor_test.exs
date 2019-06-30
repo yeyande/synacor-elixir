@@ -157,11 +157,27 @@ defmodule SynacorTest do
       )
     end
 
-    test "should overflow over 32768" do
-      assert Synacor._add(@base_state, 0, 100, 32767) == Map.replace!(
+    test "add should overflow over 32768" do
+      assert Synacor._add(@base_state, 0, 32758, 15) == Map.replace!(
         @base_state,
         :registers,
-        [99, 0, 0, 0, 0, 0, 0 ,0]
+        [5, 0, 0, 0, 0, 0, 0 ,0]
+      )
+    end
+
+    test "should multiply two numbers" do
+      assert Synacor._mult(@base_state, 0, 2, 3) == Map.replace!(
+        @base_state,
+        :registers,
+        [6, 0, 0, 0, 0, 0, 0, 0]
+      )
+    end
+
+    test "multiply should overflow two numbers over 32768" do
+      assert Synacor._mult(@base_state, 0, 2, 16400) == Map.replace!(
+        @base_state,
+        :registers,
+        [32, 0, 0, 0, 0, 0, 0, 0]
       )
     end
   end
