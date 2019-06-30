@@ -10,11 +10,13 @@ defmodule SynacorTest do
     def write('c'), do: :ok
   end
 
-  test "should give proper initialization state" do
-    assert Synacor.init_vm() == %{
+  @base_state %{
       registers: List.duplicate(0, 8),
       stack: []
-    }
+  }
+
+  test "should give proper initialization state" do
+    assert Synacor.init_vm() == @base_state
   end
 
   test "should stop application" do
@@ -22,36 +24,31 @@ defmodule SynacorTest do
   end
 
   test "should set a register" do
-    state = %{
-      registers: [1, 2, 3, 4, 5, 6, 7, 8],
-      stack: []
-    }
-    assert Synacor._set(state, 3, 254) == %{
-      registers: [1, 2, 3, 254, 5, 6, 7, 8],
-      stack: []
-    }
+    assert Synacor._set(@base_state, 3, 254) == Map.replace!(
+      @base_state,
+      :registers, 
+      [0, 0, 0, 254, 0, 0, 0, 0]
+    )
   end
 
   test "should push onto the stack" do
-    state = %{
-      registers: [1, 2, 3, 4, 5, 6, 7, 8],
-      stack: [1, 2, 3]
-    }
-    assert Synacor._push(state, 4) == %{
-      registers: [1, 2, 3, 4, 5, 6, 7, 8],
-      stack: [4, 1, 2, 3]
-    }
+    state = Map.replace!(@base_state, :stack, [1, 2, 3])
+    assert Synacor._push(state, 4) == Map.replace!(
+      @base_state,
+      :stack,
+      [4, 1, 2, 3]
+    )
   end
 
   test "should pop stack value into register" do
-    state = %{
-      registers: [1, 2, 3, 4, 5, 6, 7, 8],
-      stack: [1, 2, 3]
-    }
-    assert Synacor._pop(state, 1) == %{
-      registers: [1, 1, 3, 4, 5, 6, 7, 8],
-      stack: [2, 3]
-    }
+    state = Map.replace!(@base_state, :stack, [1, 2, 3])
+    assert Synacor._pop(state, 1) == Map.merge(
+      state,
+      %{
+        registers: [0, 1, 0, 0, 0, 0, 0, 0],
+        stack: [2, 3]
+      }
+    )
   end
 
   test "should print a character" do
