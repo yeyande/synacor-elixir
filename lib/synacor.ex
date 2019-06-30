@@ -141,6 +141,17 @@ defmodule Synacor do
     new_state |> _jmp(loc)
   end
 
+  def _ret(system \\ System, application) do
+    try do
+      old_regs = application |> Map.fetch!(:registers)
+      popped = application |> _pop(0) 
+      loc = popped |> Map.fetch!(:registers) |> Enum.at(0)
+      popped |> Map.replace!(:registers, old_regs) |> _jmp(loc)
+    rescue
+      RuntimeError -> _halt system
+    end
+  end
+
   def _out(io \\ IO, application, char) do
     io.write char
     application

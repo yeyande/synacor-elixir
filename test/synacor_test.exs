@@ -251,6 +251,15 @@ defmodule SynacorTest do
     )
   end
 
+  test "ret should set the pc to the value at the top of the stack" do
+    state = @base_state |> Map.replace!(:stack, [100])
+    assert Synacor._ret(state) == @base_state |> Map.replace!(:pc, 100)
+  end
+
+  test "ret should halt with an empty stack" do
+    assert Synacor._ret(FakeSystem, @base_state) == :stop
+  end
+
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end
