@@ -148,6 +148,24 @@ defmodule SynacorTest do
     end
   end
 
+  describe "math operations" do
+    test "should add two numbers" do
+      assert Synacor._add(@base_state, 0, 1, 3) == Map.replace!(
+        @base_state,
+        :registers,
+        [4, 0, 0, 0, 0, 0, 0, 0]
+      )
+    end
+
+    test "should overflow over 32768" do
+      assert Synacor._add(@base_state, 0, 100, 32767) == Map.replace!(
+        @base_state,
+        :registers,
+        [99, 0, 0, 0, 0, 0, 0 ,0]
+      )
+    end
+  end
+
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end

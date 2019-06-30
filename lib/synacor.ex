@@ -97,6 +97,9 @@ defmodule Synacor do
     )
   end
 
+  def _add(application, out, a, b) do
+    application |> _set(out, rem(a+b, 32768))
+  end
 
   def _out(io \\ IO, application, char) do
     io.write char
