@@ -34,8 +34,12 @@ defmodule Synacor do
       fn regs -> List.replace_at(regs, reg, val) end)
   end
 
-  def _push(stack, val) do
-    [val | stack]
+  def _push(application, val) do
+    Map.update!(
+      application,
+      :stack,
+      fn stack -> [val | stack] end
+    )
   end
 
   def _pop(application, reg) do

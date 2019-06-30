@@ -33,8 +33,14 @@ defmodule SynacorTest do
   end
 
   test "should push onto the stack" do
-    stack = [1, 2, 3]
-    assert Synacor._push(stack, 4) == [4, 1, 2, 3]
+    state = %{
+      registers: [1, 2, 3, 4, 5, 6, 7, 8],
+      stack: [1, 2, 3]
+    }
+    assert Synacor._push(state, 4) == %{
+      registers: [1, 2, 3, 4, 5, 6, 7, 8],
+      stack: [4, 1, 2, 3]
+    }
   end
 
   test "should pop stack value into register" do
