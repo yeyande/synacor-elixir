@@ -216,6 +216,21 @@ defmodule SynacorTest do
     end
   end
 
+  describe "memory operations" do
+    test "read should store 4 into register 0" do
+      state = Map.replace!(
+        @base_state,
+        :registers,
+        [0, 0, 4, 0, 0, 0, 0, 0]
+      )
+      assert Synacor._rmem(state, 0, 2) == Map.replace!(
+        state,
+        :registers,
+        [4, 0, 4, 0, 0, 0, 0, 0]
+      )
+    end
+  end
+
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
   end
