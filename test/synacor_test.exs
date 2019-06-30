@@ -106,13 +106,32 @@ defmodule SynacorTest do
     end
   end
 
-  test "should set program counter to jump value" do
-    assert Synacor._jmp(@base_state, 2) == Map.replace!(
-      @base_state,
-      :pc,
-      2
-    )
+  describe "jump operations" do
+    test "should set program counter to jump value" do
+      assert Synacor._jmp(@base_state, 2) == Map.replace!(
+        @base_state,
+        :pc,
+        2
+      )
+    end
+
+    test "should jump when address is nonzero" do
+      state = Map.replace!(@base_state,
+        :registers,
+        [2, 0, 0, 0, 0, 0, 0, 0]
+      )
+      assert Synacor._jt(state, 0, 5) == Map.replace!(
+        state,
+        :pc,
+        5
+      )
+    end
+
+    test "should not jump when address is zero" do
+      assert Synacor._jt(@base_state, 0, 5) == @base_state
+    end
   end
+
 
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state

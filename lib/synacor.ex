@@ -81,6 +81,14 @@ defmodule Synacor do
     Map.replace!(application, :pc, loc)
   end
 
+  def _jt(application, reg, loc) do
+    Map.update!(
+      application,
+      :pc,
+      fn pc -> if get_register(application, reg) != 0, do: loc, else: pc end
+    )
+  end
+
   def _out(io \\ IO, application, char) do
     io.write char
     application
