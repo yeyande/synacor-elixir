@@ -19,7 +19,8 @@ defmodule Synacor do
   def init_vm do
     %{
       registers: List.duplicate(0, 8),
-      stack: []
+      stack: [],
+      pc: 0
     }
   end
 
@@ -56,7 +57,7 @@ defmodule Synacor do
   end
 
   defp get_register(application, reg) do
-    Map.fetch!(application, :registers) |> Enum.at reg
+    Map.fetch!(application, :registers) |> Enum.at(reg)
   end
 
   def _eq(application, out, a, b) do
@@ -69,6 +70,10 @@ defmodule Synacor do
     val1 = get_register(application, a)
     val2 = get_register(application, b)
     _set(application, out, (if val1 > val2, do: 1, else: 0))
+  end
+
+  def _jmp(application, loc) do
+    Map.replace!(application, :pc, loc)
   end
 
   def _out(io \\ IO, application, char) do

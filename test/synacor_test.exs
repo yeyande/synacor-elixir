@@ -11,8 +11,9 @@ defmodule SynacorTest do
   end
 
   @base_state %{
-      registers: List.duplicate(0, 8),
-      stack: []
+    registers: List.duplicate(0, 8),
+    stack: [],
+    pc: 0
   }
 
   test "should give proper initialization state" do
@@ -103,6 +104,14 @@ defmodule SynacorTest do
     test "should set register 1 to 0 when equal" do
       assert Synacor._gt(@base_state, 1, 0, 2) == @base_state
     end
+  end
+
+  test "should set program counter to jump value" do
+    assert Synacor._jmp(@base_state, 2) == Map.replace!(
+      @base_state,
+      :pc,
+      2
+    )
   end
 
   test "should print a character" do
