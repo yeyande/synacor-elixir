@@ -180,6 +180,14 @@ defmodule SynacorTest do
         [32, 0, 0, 0, 0, 0, 0, 0]
       )
     end
+
+    test "modulo operation should return 5" do
+      assert Synacor._mod(@base_state, 0, 2, 5) == Map.replace!(
+        @base_state,
+        :registers,
+        [2, 0, 0, 0, 0, 0, 0, 0]
+      )
+    end
   end
 
   test "should print a character" do
