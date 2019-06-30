@@ -89,6 +89,15 @@ defmodule Synacor do
     )
   end
 
+  def _jf(application, reg, loc) do
+    Map.update!(
+      application,
+      :pc,
+      fn pc -> if get_register(application, reg) == 0, do: loc, else: pc end
+    )
+  end
+
+
   def _out(io \\ IO, application, char) do
     io.write char
     application

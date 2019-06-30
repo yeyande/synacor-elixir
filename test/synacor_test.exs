@@ -115,7 +115,7 @@ defmodule SynacorTest do
       )
     end
 
-    test "should jump when address is nonzero" do
+    test "jt should jump when address is nonzero" do
       state = Map.replace!(@base_state,
         :registers,
         [2, 0, 0, 0, 0, 0, 0, 0]
@@ -127,11 +127,26 @@ defmodule SynacorTest do
       )
     end
 
-    test "should not jump when address is zero" do
+    test "jt should not jump when address is zero" do
       assert Synacor._jt(@base_state, 0, 5) == @base_state
     end
-  end
 
+    test "jf should not jump when address is nonzero" do
+      state = Map.replace!(@base_state,
+        :registers,
+        [2, 0, 0, 0, 0, 0, 0, 0]
+      )
+      assert Synacor._jf(state, 0, 5) == state
+    end
+
+    test "jf should jump when address is zero" do
+      assert Synacor._jf(@base_state, 0, 5) == Map.replace!(
+        @base_state,
+        :pc,
+        5
+      )
+    end
+  end
 
   test "should print a character" do
     assert Synacor._out(FakeIO, @base_state, 'c') == @base_state
