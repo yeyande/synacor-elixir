@@ -31,24 +31,32 @@ defmodule SynacorTest do
     )
   end
 
-  test "should push onto the stack" do
-    state = Map.replace!(@base_state, :stack, [1, 2, 3])
-    assert Synacor._push(state, 4) == Map.replace!(
-      @base_state,
-      :stack,
-      [4, 1, 2, 3]
-    )
-  end
+  describe "stack operations" do 
+    test "should push onto the stack" do
+      state = Map.replace!(@base_state, :stack, [1, 2, 3])
+      assert Synacor._push(state, 4) == Map.replace!(
+        @base_state,
+        :stack,
+        [4, 1, 2, 3]
+      )
+    end
 
-  test "should pop stack value into register" do
-    state = Map.replace!(@base_state, :stack, [1, 2, 3])
-    assert Synacor._pop(state, 1) == Map.merge(
-      state,
-      %{
-        registers: [0, 1, 0, 0, 0, 0, 0, 0],
-        stack: [2, 3]
-      }
-    )
+    test "should pop stack value into register" do
+      state = Map.replace!(@base_state, :stack, [1, 2, 3])
+      assert Synacor._pop(state, 1) == Map.merge(
+        state,
+        %{
+          registers: [0, 1, 0, 0, 0, 0, 0, 0],
+          stack: [2, 3]
+        }
+      )
+    end
+
+    test "should throw error when popping from an empty stack" do
+      assert_raise RuntimeError,
+                   "Cannot pop from empty stack",
+                   fn -> Synacor._pop(@base_state, 1) end
+    end
   end
 
   test "should print a character" do

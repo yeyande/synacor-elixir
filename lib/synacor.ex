@@ -43,12 +43,16 @@ defmodule Synacor do
   end
 
   def _pop(application, reg) do
-    {top, new_state} = Map.get_and_update!(
-      application,
-      :stack,
-      fn [top | rest] -> {top, rest} end
-    )
-    _set(new_state, reg, top)
+    try do
+      {top, new_state} = Map.get_and_update!(
+        application,
+        :stack,
+        fn [top | rest] -> {top, rest} end
+      )
+      _set(new_state, reg, top)
+    rescue
+      FunctionClauseError -> raise "Cannot pop from empty stack"
+    end
   end
 
   def _out(io \\ IO, application, char) do
