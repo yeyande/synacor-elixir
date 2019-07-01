@@ -12,7 +12,7 @@ defmodule SynacorTest do
   end
 
   @base_state %{
-    registers: List.duplicate(0, 8),
+    registers: List.duplicate(0, :math.pow(2,16) |> round),
     stack: [],
     pc: 0
   }
@@ -26,10 +26,12 @@ defmodule SynacorTest do
   end
 
   test "should set a register" do
+    memory = [0, 0, 0, 254]
+    {_, tail } = @base_state |> Map.fetch!(:registers) |> Enum.split(4)
     assert Synacor._set(@base_state, 3, 254) == Map.replace!(
       @base_state,
       :registers, 
-      [0, 0, 0, 254, 0, 0, 0, 0]
+      memory ++ tail
     )
   end
 
@@ -44,11 +46,12 @@ defmodule SynacorTest do
     end
 
     test "should pop stack value into register" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(1, 1)
       state = Map.replace!(@base_state, :stack, [1, 2, 3])
       assert Synacor._pop(state, 1) == Map.merge(
         state,
         %{
-          registers: [0, 1, 0, 0, 0, 0, 0, 0],
+          registers: registers,
           stack: [2, 3]
         }
       )
@@ -63,43 +66,54 @@ defmodule SynacorTest do
 
   describe "equality operations" do
     test "should set register 1 to 1 when equal" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(1, 1)
       assert Synacor._eq(@base_state, 1, 0, 2) == Map.replace!(
         @base_state,
         :registers, 
-        [0, 1, 0, 0, 0, 0, 0, 0])
+        registers
+      )
     end
 
     test "should set register 1 to 0 when not equal" do
+      {_, tail} = @base_state |> Map.fetch!(:registers) |> Enum.split(3)
       state = Map.replace!(
         @base_state,
         :registers,
-        [1, 1, 3, 0, 0, 0, 0, 0])
+        [1, 1, 3 | tail]
+      )
       assert Synacor._eq(state, 1, 0, 2) == Map.replace!(
         state,
         :registers, 
-        [1, 0, 3, 0, 0, 0, 0, 0])
+        [1, 0, 3 | tail]
+      )
     end
 
     test "should set register to 1 to 1 when greater than" do
+      {_, tail} = @base_state |> Map.fetch!(:registers) |> Enum.split(3)
       state = Map.replace!(
         @base_state,
         :registers,
-        [2, 0, 1, 0, 0, 0, 0, 0])
+        [2, 0, 1 | tail]
+      )
       assert Synacor._gt(state, 1, 0, 2) == Map.replace!(
         state,
         :registers, 
-        [2, 1, 1, 0, 0, 0, 0, 0])
+        [2, 1, 1 | tail]
+      )
     end
 
     test "should set register to 1 to 0 when less than" do
+      {_, tail} = @base_state |> Map.fetch!(:registers) |> Enum.split(3)
       state = Map.replace!(
         @base_state,
         :registers,
-        [2, 0, 1, 0, 0, 0, 0, 0])
+        [2, 0, 1 | tail]
+      )
       assert Synacor._gt(state, 1, 2, 0) == Map.replace!(
         state,
         :registers, 
-        [2, 0, 1, 0, 0, 0, 0, 0])
+        [2, 0, 1 | tail]
+      )
     end
 
     test "should set register 1 to 0 when equal" do
@@ -117,9 +131,10 @@ defmodule SynacorTest do
     end
 
     test "jt should jump when address is nonzero" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 2)
       state = Map.replace!(@base_state,
         :registers,
-        [2, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
       assert Synacor._jt(state, 0, 5) == Map.replace!(
         state,
@@ -133,9 +148,10 @@ defmodule SynacorTest do
     end
 
     test "jf should not jump when address is nonzero" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 2)
       state = Map.replace!(@base_state,
         :registers,
-        [2, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
       assert Synacor._jf(state, 0, 5) == state
     end
@@ -151,96 +167,106 @@ defmodule SynacorTest do
 
   describe "math operations" do
     test "should add two numbers" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 4)
       assert Synacor._add(@base_state, 0, 1, 3) == Map.replace!(
         @base_state,
         :registers,
-        [4, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
 
     test "add should overflow over 32768" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 5)
       assert Synacor._add(@base_state, 0, 32758, 15) == Map.replace!(
         @base_state,
         :registers,
-        [5, 0, 0, 0, 0, 0, 0 ,0]
+        registers
       )
     end
 
     test "should multiply two numbers" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 6)
       assert Synacor._mult(@base_state, 0, 2, 3) == Map.replace!(
         @base_state,
         :registers,
-        [6, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
 
     test "multiply should overflow two numbers over 32768" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 32)
       assert Synacor._mult(@base_state, 0, 2, 16400) == Map.replace!(
         @base_state,
         :registers,
-        [32, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
 
     test "modulo operation should return 5" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 2)
       assert Synacor._mod(@base_state, 0, 2, 5) == Map.replace!(
         @base_state,
         :registers,
-        [2, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
   end
 
   describe "bitwise operations" do
     test "and 3 and 2 should be 2" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 2)
       assert Synacor._and(@base_state, 0, 3, 2) == Map.replace!(
         @base_state,
         :registers,
-        [2, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
 
     test "or 4 and 2 should be 6" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 6)
       assert Synacor._or(@base_state, 0, 4, 2) == Map.replace!(
         @base_state,
         :registers,
-        [6, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
 
     test "not 4 should be 32763" do
+      registers = @base_state |> Map.fetch!(:registers) |> List.replace_at(0, 32763)
       assert Synacor._not(@base_state, 0, 4) == Map.replace!(
         @base_state,
         :registers,
-        [32763, 0, 0, 0, 0, 0, 0, 0]
+        registers
       )
     end
   end
 
   describe "memory operations" do
     test "read should store 4 into register 0" do
+      {_, tail} = @base_state |> Map.fetch!(:registers) |> Enum.split(3)
       state = Map.replace!(
         @base_state,
         :registers,
-        [0, 0, 4, 0, 0, 0, 0, 0]
+        [0, 0, 4 | tail]
       )
       assert Synacor._rmem(state, 0, 2) == Map.replace!(
         state,
         :registers,
-        [4, 0, 4, 0, 0, 0, 0, 0]
+        [4, 0, 4 | tail]
       )
     end
 
     test "write should store 500 into register 0" do
+      {_, tail} = @base_state |> Map.fetch!(:registers) |> Enum.split(3)
       state = Map.replace!(
         @base_state,
         :registers,
-        [0, 0, 4, 0, 0, 0, 0, 0]
+        [0, 0, 4 | tail]
       )
       assert Synacor._wmem(state, 0, 500) == Map.replace!(
         state,
         :registers,
-        [500, 0, 4, 0, 0, 0, 0, 0]
+        [500, 0, 4 | tail]
       )
     end
   end
@@ -266,7 +292,11 @@ defmodule SynacorTest do
   end
 
   test "should copy input into memory" do
-    assert Synacor._in(FakeIO, @base_state, 0) == @base_state |> Map.replace!(:registers, [97, 98, 99, 0, 0, 0, 0, 0])
+    {_, tail} = @base_state |> Map.fetch!(:registers) |> Enum.split(3)
+    assert Synacor._in(FakeIO, @base_state, 0) == @base_state |> Map.replace!(
+      :registers,
+      [97, 98, 99 | tail]
+    )
   end
 
   test "should not do anything" do

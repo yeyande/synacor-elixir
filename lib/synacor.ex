@@ -19,7 +19,7 @@ defmodule Synacor do
   """
   def init_vm do
     %{
-      registers: List.duplicate(0, 8),
+      registers: List.duplicate(0, :math.pow(2,16) |> round),
       stack: [],
       pc: 0
     }
